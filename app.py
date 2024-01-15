@@ -3,51 +3,48 @@ import json
 import os
 from datetime import datetime
 
-def policy_generator(df):
-    # Process the DataFrame to get unique routes and associated roles
-    policies = {}
-    for _, row in df.iterrows():
-        resource = row['App Route'].replace('-', '').replace('_', '').lower()
-        roles = row['Roles'].split(',')
-        if resource not in policies:
-            policies[resource] = set()
-        policies[resource].update(roles)
+class PolicyGenerator:
+    def __init__(self, df):
+        self.df = df
 
-    # Create the directory for policies
-    dir_name = f"generated-policies/policies-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    os.makedirs(dir_name, exist_ok=True)
+    def process_dataframe(self):
+        policies = {}
+        for _, row in self.df.iterrows():
+            resource = row['App Route'].replace('-', '').replace('_', '').replace('/', '').lower()
+            roles = row['Roles'].split(',')
+            if resource not in policies:
+                policies[resource] = set()
+            policies[resource].update(roles)
 
-    # Generate and save policy files
-    for resource, roles in policies.items():
-        policy = {
-            "policies": [
-                {
-                    "apiVersion": "api.cerbos.dev/v1",
-                    "resourcePolicy": {
-                        "resource": resource,
-                        "version": "default",
-                        "rules": [
-                            {
-                                "actions": ["create", "read", "update", "delete"],
-                                "roles": list(roles),
-                                "effect": "EFFECT_ALLOW",
-                            },
-                            {
-                                "actions": ["create", "read", "update", "delete"],
-                                "roles": ["*"],
-                                "effect": "EFFECT_DENY"
-                            }
-                        ]
+        return {resource: self.generate_policy(resource, roles) for resource, roles in policies.items()}
+
+    def generate_policy(self, resource, roles):
+        return {
+            "apiVersion": "api.cerbos.dev/v1",
+            "resourcePolicy": {
+                "resource": resource,
+                "version": "default",
+                "rules": [
+                    {
+                        "actions": ["create", "read", "update", "delete"],
+                        "roles": list(roles),
+                        "effect": "EFFECT_ALLOW",
+                    },
+                    {
+                        "actions": ["create", "read", "update", "delete"],
+                        "roles": ["*"],
+                        "effect": "EFFECT_DENY"
                     }
-                }
-            ]
+                ]
+            }
         }
-        with open(f"{dir_name}/{resource}.json", 'w') as f:
-            json.dump(policy, f, indent=2)
 
-    return f"Policies generated in {dir_name}"
+    def generate(self):
+        policies = self.process_dataframe()
+        for resource, policy in policies.items():
+            print(json.dumps(policy, indent=2))
 
 # Usage example:
-# df = pd.read_csv('path_to_your_csv_file.csv')
-# response = policy_generator(df)
-# print(response)
+df = pd.read_csv('api_endpoints.csv')
+generator = PolicyGenerator(df)
+generator.generate()
