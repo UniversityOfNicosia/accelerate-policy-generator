@@ -61,11 +61,5 @@ class PolicyGeneratorDirectory(PolicyGenerator):
 
 # Usage example:
 df = pd.read_csv('api_endpoints.csv')
-
-# Default behavior
 generator = PolicyGenerator(df)
-generator.generate()
-
-# Generate policies in a directory
-generator = PolicyGeneratorDirectory(df)
 generator.generate()
