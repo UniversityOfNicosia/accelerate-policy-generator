@@ -62,9 +62,10 @@ class PolicyGeneratorDirectory(PolicyGenerator):
 class PolicyGeneratorFile(PolicyGenerator):
     def generate(self):
         policies = self.process_dataframe()
-        combined_policies = {"policies": [policy for policy in policies.values()]}
+        combined_policies = {"policies": [policy['resourcePolicy'] for policy in policies.values()]}
+        # combined_policies = {"policies": [policy for policy in policies.values()]}
 
-        file_name = f"generated-policies/all-policies-{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+        file_name = f"generated-policies/cerbos-policies-{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
         with open(file_name, 'w') as f:
@@ -75,5 +76,5 @@ class PolicyGeneratorFile(PolicyGenerator):
 
 # Usage example:
 df = pd.read_csv('api_endpoints.csv')
-generator = PolicyGenerator(df)
+generator = PolicyGeneratorFile(df)
 generator.generate()
