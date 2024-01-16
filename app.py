@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 
+
 class PolicyGenerator:
     def __init__(self, df):
         self.df = df
@@ -44,6 +45,7 @@ class PolicyGenerator:
         for resource, policy in policies.items():
             print(json.dumps(policy, indent=2))
 
+
 class PolicyGeneratorDirectory(PolicyGenerator):
     def generate(self):
         policies = self.process_dataframe()
@@ -59,5 +61,11 @@ class PolicyGeneratorDirectory(PolicyGenerator):
 
 # Usage example:
 df = pd.read_csv('api_endpoints.csv')
+
+# Default behavior
 generator = PolicyGenerator(df)
+generator.generate()
+
+# Generate policies in a directory
+generator = PolicyGeneratorDirectory(df)
 generator.generate()
