@@ -12,7 +12,7 @@ class PolicyGenerator:
         policies = {}
         for _, row in self.df.iterrows():
             resource = row['App Route'].replace('-', '').replace('_', '').replace('/', '').lower()
-            roles = row['Roles'].split(',')
+            roles = row['Roles'].replace(' ', '').split(',')
             if resource not in policies:
                 policies[resource] = set()
             policies[resource].update(roles)
