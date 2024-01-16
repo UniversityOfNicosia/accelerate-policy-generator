@@ -59,6 +59,20 @@ class PolicyGeneratorDirectory(PolicyGenerator):
         return f"Policies generated in {dir_name}"
 
 
+class PolicyGeneratorFile(PolicyGenerator):
+    def generate(self):
+        policies = self.process_dataframe()
+        combined_policies = {"policies": [policy for policy in policies.values()]}
+
+        file_name = f"generated-policies/all-policies-{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
+
+        with open(file_name, 'w') as f:
+            json.dump(combined_policies, f, indent=2)
+
+        return f"All policies generated in {file_name}"
+
+
 # Usage example:
 df = pd.read_csv('api_endpoints.csv')
 generator = PolicyGenerator(df)
