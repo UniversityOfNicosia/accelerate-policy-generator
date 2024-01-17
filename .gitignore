@@ -1,0 +1,6 @@
+# Ignore large data files
+*.jsonl
+*.csv
+*.xlsx
+*.txt
+*.json
