@@ -13,14 +13,7 @@ class PolicyGenerator:
     """
     A class for generating policies based on a dataframe.
     """
-
     def __init__(self, df):
-        """
-        Initializes the PolicyGenerator object.
-
-        Args:
-            df (pandas.DataFrame): The input dataframe.
-        """
         self.df = df
 
     def process_dataframe(self):
@@ -129,5 +122,5 @@ class PolicyGeneratorFile(PolicyGenerator):
 
 # Usage example:
 df = pd.read_csv('api_endpoints.csv')
-generator = PolicyGeneratorFile(df)
+generator = PolicyGenerator(df)
 generator.generate()
