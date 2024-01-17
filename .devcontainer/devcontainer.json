@@ -3,11 +3,21 @@
   "hostRequirements": {
     "cpus": 4
   },
-  "forwardPorts": [3592],
   "waitFor": "onCreateCommand",
   "updateContentCommand": "pip install -r requirements.txt",
   "postCreateCommand": "bash -i /workspaces/accelerate-policy-generator/install-soft.sh",
+  "portsAttributes": {
+    "3592": {
+      "label": "Application",
+      "onAutoForward": "openPreview"
+    }
+  },
   "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "app.py"
+      ]
+    },
     "vscode": {
       "extensions": [
         "ms-python.python",
@@ -17,4 +27,5 @@
       ]
     }
   },
+  "forwardPorts": [3592]
 }
