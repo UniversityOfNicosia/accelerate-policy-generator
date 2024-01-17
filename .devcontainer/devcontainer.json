@@ -6,7 +6,7 @@
   "forwardPorts": [3592],
   "waitFor": "onCreateCommand",
   "updateContentCommand": "pip install -r requirements.txt",
-  "postCreateCommand": "bash -i /workspaces/cerbos-policy-generator/install-soft.sh",
+  "postCreateCommand": "bash -i /workspaces/accelerate-policy-generator/install-soft.sh",
   "customizations": {
     "vscode": {
       "extensions": [
