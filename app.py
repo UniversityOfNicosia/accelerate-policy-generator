@@ -7,6 +7,8 @@ import json
 import os
 from datetime import datetime
 import pandas as pd
+import requests
+from dotenv import load_dotenv
 
 
 class PolicyGenerator:
@@ -118,6 +120,41 @@ class PolicyGeneratorFile(PolicyGenerator):
             json.dump(combined_policies, f, indent=2)
 
         return f"All policies generated in {file_name}"
+    
+
+class PolicyGeneratorCerbosLocal(PolicyGenerator):
+    """
+    A class for generating policies and updating them in a local Cerbos instance.
+    """
+
+    def add_update_cerbos(self, policy_data):
+        """
+        Adds or updates a policy in a local Cerbos instance.
+
+        Args:
+            policy_data (dict): The policy data.
+
+        Returns:
+            int: 1 if the request was successful, 0 otherwise.
+        """
+        load_dotenv()
+        policy_json = json.dumps(policy_data)
+        headers = {
+            "Content-Type": "application/json",  
+        }
+        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers)
+        if response.status_code == 200:
+            return 1
+        else:
+            return 0
+
+    def generate(self):
+        """
+        Generates and updates the policies in a local Cerbos instance.
+        """
+        policies = self.process_dataframe()
+        for resource, policy in policies.items():
+            self.add_update_cerbos(policy)
 
 
 # Usage example:
