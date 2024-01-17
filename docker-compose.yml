@@ -10,7 +10,7 @@ services:
       - "3593:3593"
     volumes:
       - /workspaces/accelerate-policy-generator/config:/config
-      - /workspaces/accelerate-policy-generator/policies:/policies
+#      - /workspaces/accelerate-policy-generator/policies:/policies
     environment:
         - MYSQL_USER=accelerate
         - MYSQL_PASSWORD=accelerate
