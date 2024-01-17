@@ -4,7 +4,7 @@ version: "3.9"
 services:
   cerbos:
     image: ghcr.io/cerbos/cerbos:latest
-    command: ["server", "--config=/config/cerbos.conf.yaml"]
+    command: ["server", "--config=/config/cerbos.conf.yml"]
     ports:
       - "3592:3592"
       - "3593:3593"
