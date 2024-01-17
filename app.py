@@ -5,7 +5,9 @@ This file contains classes and methods for generating policies.
 # Import libraries
 import json
 import os
+import requests
 from datetime import datetime
+from dotenv import load_dotenv
 import pandas as pd
 import requests
 from dotenv import load_dotenv
@@ -65,6 +67,23 @@ class PolicyGenerator:
                 ]
             }
         }
+
+    def add_update_cerbos(policy_data):
+        load_dotenv()
+    # Convert the policy data to JSON
+        policy_json = json.dumps(policy_data)
+    # Set the appropriate headers, if required
+        headers = {
+        "Content-Type": "application/json",   
+        }
+    # Make the POST request
+        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers)
+    # Check the response
+        if response.status_code == 200:
+            return (1) # Success
+        else:
+            return (0) # Failure
+
 
     def generate(self):
         """
