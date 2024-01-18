@@ -9,7 +9,7 @@
   "portsAttributes": {
     "3592": {
       "label": "Application",
-      "onAutoForward": "openPreview"
+      "onAutoForward": "openBrowser"
     }
   },
   "customizations": {
