@@ -4,3 +4,6 @@
 *.xlsx
 *.txt
 *.json
+
+# Ignore log files
+*.log
