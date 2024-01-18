@@ -92,7 +92,7 @@ class PolicyGeneratorDirectory(PolicyGenerator):
         os.makedirs(dir_name, exist_ok=True)
 
         for resource, policy in policies.items():
-            with open(f"{dir_name}/{resource}.json", 'w') as f:
+            with open(f"{dir_name}/{resource}.json", 'w', encoding='utf-8') as f:
                 json.dump(policy, f, indent=2)
 
         return f"Policies generated in {dir_name}"
@@ -116,7 +116,7 @@ class PolicyGeneratorFile(PolicyGenerator):
         file_name = f"generated-policies/cerbos-policies-{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
-        with open(file_name, 'w') as f:
+        with open(file_name, 'w', encoding='utf-8') as f:
             json.dump(combined_policies, f, indent=2)
 
         return f"All policies generated in {file_name}"
