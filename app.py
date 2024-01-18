@@ -142,7 +142,7 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         headers = {
             "Content-Type": "application/json",  
         }
-        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers)
+        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers, timeout=5)
         if response.status_code == 200:
             return 1
         else:
