@@ -130,19 +130,14 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
     def add_update_cerbos(self, policy_data):
         """
         Adds or updates a policy in a local Cerbos instance.
-
-        Args:
-            policy_data (dict): The policy data.
-
-        Returns:
-            int: 1 if the request was successful, 0 otherwise.
         """
-        load_dotenv()
+        codespace_name = os.getenv('CODESPACE_NAME')
+        cerbos_url = os.getenv('CERBOS_URL', f'https://{codespace_name}-3592.app.github.dev/')
         policy_json = json.dumps(policy_data)
         headers = {
             "Content-Type": "application/json",  
         }
-        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers, timeout=5)
+        response = requests.post(cerbos_url+'/admin/policy', data=policy_json, headers=headers, timeout=5)
         if response.status_code == 200:
             return 1
         else:
