@@ -111,7 +111,7 @@ class PolicyGeneratorFile(PolicyGenerator):
             str: The path where the policies are saved.
         """
         policies = self.process_dataframe()
-        combined_policies = {"policies": [policy['resourcePolicy'] for policy in policies.values()]}
+        combined_policies = {"policies": [policy for policy in policies.values()]}
 
         file_name = f"generated-policies/cerbos-policies-{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
@@ -133,7 +133,9 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         """
         codespace_name = os.getenv('CODESPACE_NAME')
         cerbos_url = os.getenv('CERBOS_URL', f'https://{codespace_name}-3592.app.github.dev/')
-        policy_json = json.dumps(policy_data)
+        combined_policies = {"policies": [policy for policy in policy_data.values()]}
+        print(combined_policies)
+        policy_json = json.dumps(combined_policies)
         headers = {
             "Content-Type": "application/json",  
         }
@@ -154,5 +156,5 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
 
 # Usage example:
 dataframe = pd.read_csv('api_endpoints.csv')
-generator = PolicyGeneratorCerbosLocal(dataframe)
+generator = PolicyGeneratorFile(dataframe)
 generator.generate()
