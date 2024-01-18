@@ -3,11 +3,11 @@ This file contains classes and methods for generating policies.
 """
 
 # Import libraries
+from datetime import datetime
 import json
 import os
-import requests
-from datetime import datetime
 import pandas as pd
+import requests
 from dotenv import load_dotenv
 
 
@@ -71,7 +71,7 @@ class PolicyGenerator:
         Generates and prints the policies.
         """
         policies = self.process_dataframe()
-        for resource, policy in policies.items():
+        for _, policy in policies.items():
             print(json.dumps(policy, indent=2))
 
 
@@ -120,7 +120,7 @@ class PolicyGeneratorFile(PolicyGenerator):
             json.dump(combined_policies, f, indent=2)
 
         return f"All policies generated in {file_name}"
-    
+
 
 class PolicyGeneratorCerbosLocal(PolicyGenerator):
     """
@@ -153,11 +153,11 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         Generates and updates the policies in a local Cerbos instance.
         """
         policies = self.process_dataframe()
-        for resource, policy in policies.items():
+        for _, policy in policies.items():
             self.add_update_cerbos(policy)
 
 
 # Usage example:
-df = pd.read_csv('api_endpoints.csv')
-generator = PolicyGeneratorCerbosLocal(df)
+dataframe = pd.read_csv('api_endpoints.csv')
+generator = PolicyGeneratorCerbosLocal(dataframe)
 generator.generate()
