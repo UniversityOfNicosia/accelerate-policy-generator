@@ -155,7 +155,7 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         for _, policy in policies.items():
             response = self.add_update_cerbos(policy)
             if response['status_code'] != 200:
-                print(f"Error: {response['status_code']} - {response['status']} {response['message']} - {response['resource']}")
+                print(f"Error: {response['status_code']} - {response['status']} - {response['message']} - {response['resource']}")
 
 
 # Usage example:
