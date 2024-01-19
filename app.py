@@ -9,7 +9,7 @@ import os
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 
 class PolicyGenerator:
