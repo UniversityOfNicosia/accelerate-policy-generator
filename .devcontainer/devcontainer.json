@@ -4,7 +4,7 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "pip install -r requirements.txt",
+  // "updateContentCommand": "pip install -r requirements.txt",
   "postCreateCommand": "bash -i ./install-venv.sh && bash -i ./install-soft.sh",
   "portsAttributes": {
     "3592": {
