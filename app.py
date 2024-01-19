@@ -8,6 +8,7 @@ import json
 import os
 import pandas as pd
 import requests
+from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 
 
@@ -132,18 +133,19 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         Adds or updates a policy in a local Cerbos instance.
         """
         codespace_name = os.getenv('CODESPACE_NAME')
+        auth_credentials = HTTPBasicAuth(os.getenv('CERBOS_USERNAME'), os.getenv('CERBOS_PASSWORD'))
         cerbos_url = os.getenv('CERBOS_URL', f'https://{codespace_name}-3592.app.github.dev/')
-        combined_policies = {"policies": [policy for policy in policy_data.values()]}
-        print(combined_policies)
-        policy_json = json.dumps(combined_policies)
+        policy_json = {"policies": [policy_data]}
         headers = {
             "Content-Type": "application/json",  
         }
-        response = requests.post(cerbos_url+'/admin/policy', data=policy_json, headers=headers, timeout=5)
-        if response.status_code == 200:
-            return 1
-        else:
-            return 0
+        response = requests.post(cerbos_url+'/admin/policy', json=policy_json, headers=headers, auth=auth_credentials, timeout=5)
+        return {
+            'status_code': response.status_code,
+            'status': 'Success' if response.status_code == 200 else 'Failure',
+            'message': response.content,
+            'resource': policy_json
+        }
 
     def generate(self):
         """
@@ -151,10 +153,12 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
         """
         policies = self.process_dataframe()
         for _, policy in policies.items():
-            self.add_update_cerbos(policy)
+            response = self.add_update_cerbos(policy)
+            if response['status_code'] != 200:
+                print(f"Error: {response['status_code']} - {response['status']} {response['message']} - {response['resource']}")
 
 
 # Usage example:
 dataframe = pd.read_csv('api_endpoints.csv')
-generator = PolicyGeneratorFile(dataframe)
+generator = PolicyGeneratorCerbosLocal(dataframe)
 generator.generate()
