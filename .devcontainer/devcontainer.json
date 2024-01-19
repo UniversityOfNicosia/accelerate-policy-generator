@@ -5,7 +5,7 @@
   },
   "waitFor": "onCreateCommand",
   "updateContentCommand": "pip install -r requirements.txt",
-  "postCreateCommand": "bash -i ./install-soft.sh",
+  "postCreateCommand": "bash -i ./install-venv.sh && bash -i ./install-soft.sh",
   "portsAttributes": {
     "3592": {
       "label": "Application",
