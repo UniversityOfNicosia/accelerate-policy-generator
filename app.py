@@ -17,6 +17,23 @@ class PolicyGenerator:
     """
     def __init__(self, df):
         self.df = df
+    
+    def validate(self):
+        load_dotenv()
+        body = {
+            "email": os.getenv('API_username'),
+            "password": os.getenv('API_password')
+            }
+        headers = {
+            "Content-Type": "application/json", 
+            }
+        response = requests.post(os.getenv('API_URL')+'/auth/login', data=json.dumps(body), headers=headers)
+        if response.status_code == 200:
+            # return (json.loads(response.text)['accessToken'])
+            self.jwt = json.loads(response.text)['accessToken']
+        else:
+            raise Exception("Invalid credentials")
+
 
     def process_dataframe(self):
         """
@@ -47,40 +64,75 @@ class PolicyGenerator:
             dict: The generated policy.
         """
         return {
-            "apiVersion": "api.cerbos.dev/v1",
-            "resourcePolicy": {
-                "resource": resource,
-                "version": "default",
-                "rules": [
-                    {
-                        "actions": ["create", "read", "update", "delete"],
-                        "roles": list(roles),
-                        "effect": "EFFECT_ALLOW",
-                    },
-                    {
-                        "actions": ["create", "read", "update", "delete"],
-                        "roles": ["*"],
-                        "effect": "EFFECT_DENY"
-                    }
-                ]
-            }
+  "policies": [
+    {
+      "apiVersion": "api.cerbos.dev/v1",
+     
+      "resourcePolicy": {
+        "resource": resource,
+        "version": "1",
+        "rules": [
+        {
+          "actions": ["create", "read", "update", "delete"],
+          "roles": ["DEVELOPER", "SYS_ADMIN"],
+          "effect": "EFFECT_ALLOW"
+        },
+        {
+          "actions": ["create", "read", "update", "delete"],
+          "roles": ["*"],
+          "effect": "EFFECT_DENY"
         }
+      ]
+      }
+    }
+  ]
+}
 
-    def add_update_cerbos(policy_data):
+    #def basic_auth(username, password):
+        #token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
+        #return f'Basic {token}'
+
+    def add_update_local_cerbos(self, policy_data):
         load_dotenv()
     # Convert the policy data to JSON
         policy_json = json.dumps(policy_data)
     # Set the appropriate headers, if required
         headers = {
-        "Content-Type": "application/json",   
+        "Content-Type": "application/json",
+        #"Authorization" : basic_auth(username, password)   
         }
     # Make the POST request
-        response = requests.post(os.getenv('CERBOS_URL'), data=policy_json, headers=headers)
+        response = requests.post(os.getenv('CERBOS_URL')+'/admin/policy', data=policy_json, headers=headers, auth=('cerbos', 'cerbosAdmin'))
     # Check the response
+        print(response.text)       
         if response.status_code == 200:
             return (1) # Success
         else:
+            print(json.dumps(policy_data, indent=2))
             return (0) # Failure
+
+
+
+    def add_update_accelerate_cerbos(self, policy_data):
+        load_dotenv()
+    # Convert the policy data to JSON
+        policy_json = json.dumps(policy_data)
+    # Set the appropriate headers, if required
+        headers = {
+        "Content-Type": "application/json",
+        "Authorization" : "bearer " + self.jwt
+        }
+
+    # Make the POST request
+        response = requests.post(os.getenv('API_URL')+'/authorization-admin', data=policy_json, headers=headers)
+    # Check the response
+        print(response.text)
+        if response.status_code == 200:
+            return (1) # Success
+        else:
+            print(json.dumps(policy_data, indent=2))
+            return (0) # Failure
+
 
 
     def generate(self):
@@ -89,8 +141,9 @@ class PolicyGenerator:
         """
         policies = self.process_dataframe()
         for resource, policy in policies.items():
-            print(json.dumps(policy, indent=2))
-
+            #print(json.dumps(policy, indent=2))
+            #self.add_update_local_cerbos(policy)
+            self.add_update_accelerate_cerbos(policy)
 
 class PolicyGeneratorDirectory(PolicyGenerator):
     """
@@ -140,6 +193,10 @@ class PolicyGeneratorFile(PolicyGenerator):
 
 
 # Usage example:
+    
 df = pd.read_csv('api_endpoints.csv')
 generator = PolicyGenerator(df)
+
+generator.validate()
+
 generator.generate()

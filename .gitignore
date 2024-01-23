@@ -4,3 +4,5 @@
 *.xlsx
 *.txt
 *.json
+.venv
+pgen
