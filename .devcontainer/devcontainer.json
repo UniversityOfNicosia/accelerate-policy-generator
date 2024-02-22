@@ -4,7 +4,7 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "pip install -r requirements.txt",
+  "updateContentCommand": "pip install -r requirements.txt && curl -o api_endpoints.csv https://github.com/UniversityOfNicosia/accelerate-policy-generator/files/13959956/api_endpoints.csv",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -14,5 +14,5 @@
         "ms-azuretools.vscode-docker"
       ]
     }
-  },
+  }
 }
