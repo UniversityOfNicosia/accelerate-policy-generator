@@ -160,5 +160,5 @@ class PolicyGeneratorCerbosLocal(PolicyGenerator):
 
 # Usage example:
 dataframe = pd.read_csv('api_endpoints.csv')
-generator = PolicyGeneratorCerbosLocal(dataframe)
+generator = PolicyGenerator(dataframe)
 generator.generate()
